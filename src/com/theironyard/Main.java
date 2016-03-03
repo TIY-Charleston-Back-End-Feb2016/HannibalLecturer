@@ -80,5 +80,15 @@ public class Main {
                     return s.serialize(selectLecturers(conn));
                 })
         );
+        Spark.post(
+                "/lecturers",
+                ((request, response) -> {
+                    String name = request.queryParams("name");
+                    String topic = request.queryParams("topic");
+                    String image = request.queryParams("image");
+                    insertLecturer(conn, name, topic, image);
+                    return "";
+                })
+        );
     }
 }
