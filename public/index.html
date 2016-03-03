@@ -9,24 +9,30 @@
   <body>
     <header>
       <nav>
-        <input type="text" name="lecturer" value="" placeholder="Find Your Lecturer">
+        <h2 id="title">Hannibal Lecturer</h2>
       </nav>
     </header>
     <div class="container">
-      <section class="lecturer">
+      <section class="create-lecturer">
         <form class="">
           <input type="text" name="name" value="" placeholder="Enter a New Hannibal">
-          <input type="text" name="name" value="" placeholder="Enter Topic">
-          <input type="text" name="name" value="" placeholder="Enter Image Link">
-          <input type="submit" name="name" value="Submit">
+          <input type="text" name="topic" value="" placeholder="Enter Topic">
+          <input type="text" name="image" value="" placeholder="Enter Image Link">
+          <input type="submit" name="create-lecturer" value="Submit">
+          <input type="button" name="show-lecturers" value="Get Lecturers">
+
         </form>
+      </section>
+
+      <section class='lecturers hidden'>
+
       </section>
 
       <section class="create-rating hidden">
         <form class="">
           <input type="text" name="author" value="" placeholder="Author">
-          <input type="text" name="text" value="" placeholder="Comment">
-          <span class="thumbs">Is Good?<input type="checkbox" name="name" value=""></span>
+          <input type="text" name="comment" value="" placeholder="Comment">
+          <span class="thumbs">Is Good?<input id="isGood" type="checkbox" name="isGood" value=""></span>
           <input type="submit" name="" value="Submit Rating">
         </form>
       </section>
@@ -38,6 +44,7 @@
 
     <script src="bower_components/jquery/dist/jquery.min.js" charset="utf-8"></script>
     <script src="bower_components/underscore/underscore-min.js" charset="utf-8"></script>
+    <script src="templates.js" charset="utf-8"></script>
     <script src="app.js" charset="utf-8"></script>
   </body>
 </html>
