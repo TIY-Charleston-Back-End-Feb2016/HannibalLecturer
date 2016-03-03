@@ -57,3 +57,7 @@ nav input {
   color: #4A7A97;
   height: 30px;
 }
+
+.hidden {
+  display: none;
+}
