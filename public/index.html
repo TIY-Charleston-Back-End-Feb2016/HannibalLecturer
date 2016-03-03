@@ -13,14 +13,31 @@
       </nav>
     </header>
     <div class="container">
-      <form class="" action="index.html" method="post">
-        <input type="text" name="name" value="" placeholder="Enter a Hannibal">
-        <input type="submit" name="name" value="Submit">
-      </form>
+      <section class="lecturer">
+        <form class="">
+          <input type="text" name="name" value="" placeholder="Enter a New Hannibal">
+          <input type="text" name="name" value="" placeholder="Enter Topic">
+          <input type="text" name="name" value="" placeholder="Enter Image Link">
+          <input type="submit" name="name" value="Submit">
+        </form>
+      </section>
+
+      <section class="create-rating hidden">
+        <form class="">
+          <input type="text" name="author" value="" placeholder="Author">
+          <input type="text" name="text" value="" placeholder="Comment">
+          <span class="thumbs">Is Good?<input type="checkbox" name="name" value=""></span>
+          <input type="submit" name="" value="Submit Rating">
+        </form>
+      </section>
+
+      <section class='ratings hidden'>
+
+      </section>
     </div>
 
     <script src="bower_components/jquery/dist/jquery.min.js" charset="utf-8"></script>
-    <script src="bower_components/underscore/underscore.min.js" charset="utf-8"></script>
+    <script src="bower_components/underscore/underscore-min.js" charset="utf-8"></script>
     <script src="app.js" charset="utf-8"></script>
   </body>
 </html>

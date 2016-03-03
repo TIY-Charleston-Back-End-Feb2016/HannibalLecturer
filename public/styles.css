@@ -2,9 +2,13 @@
   font-family: 'roboto', 'fantasy', 'san-serif'
 }
 
+body {
+  background-color: #9DD663;
+}
+
 nav {
   width: 100%;
-  background-color: #ad4321;
+  background-color: #4A7A97;
   margin: 0 auto;
   border-bottom: 2px dotted pink;
   height: 45px;
@@ -13,20 +17,47 @@ nav {
 nav input {
   width: 30%;
   margin-left: 35%;
+  height: 30px;
+  margin-top: 4px;
 }
 
 .container {
   width: 80%;
   margin: 0 auto;
+  margin-top: 10px;
+}
+
+.lecturer {
+  text-align: center;
 }
 
 .container form input[type='text'] {
-  width: 30%;
+  width: 50%;
+  height: 30px;
+  margin: 2px;
+  padding-left: 35%;
+  border: 3px solid #4A7A97;
 }
 
 .container form input[type='submit'] {
   width: 20%;
-  background-color: #ad4321;
+  background-color: #4A7A97;
   border-radius: 10px;
   color: #fff;
+  height: 30px;
+  margin-left: 38%;
+  margin-top: 1%;
+  display: block;
+}
+
+.container form input[type='submit']:hover {
+  width: 20%;
+  background-color: #fff;
+  border-radius: 10px;
+  color: #4A7A97;
+  height: 30px;
+}
+
+.hidden {
+  display: none;
 }
