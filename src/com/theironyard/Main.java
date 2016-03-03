@@ -1,5 +1,6 @@
 package com.theironyard;
 
+import jodd.json.JsonSerializer;
 import spark.Spark;
 
 import java.sql.*;
@@ -66,5 +67,18 @@ public class Main {
 
         Spark.externalStaticFileLocation("public");
         Spark.init();
+
+        // insert test data
+        if (selectLecturers(conn).size() == 0) {
+            insertLecturer(conn, "Hannibal", "What's fuh dinnah?", "http://screenrant.com/wp-content/uploads/Anthony-Hopkins-as-Hannibal-Lecter-in-Silence-of-the-Lambs.jpg");
+        }
+
+        Spark.get(
+                "/lecturers",
+                ((request, response) -> {
+                    JsonSerializer s = new JsonSerializer();
+                    return s.serialize(selectLecturers(conn));
+                })
+        );
     }
 }
