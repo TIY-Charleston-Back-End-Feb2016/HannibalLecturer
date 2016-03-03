@@ -14,26 +14,40 @@ public class Main {
         stmt.execute("CREATE TABLE IF NOT EXISTS reviews (id IDENTITY, author VARCHAR, text VARCHAR, lecturer_id INT, is_good BOOLEAN)");
     }
 
-    public static void insertLecturer(Connection conn, String name, String topic, String image) throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement("INSERT INTO lecturers VALUES (NULL, ?, ?, ?)");
+    public static int insertLecturer(Connection conn, String name, String topic, String image) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("INSERT INTO lecturers VALUES (NULL, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1, name);
         stmt.setString(2, topic);
         stmt.setString(3, image);
         stmt.execute();
+
+        // return id
+        ResultSet rs = stmt.getGeneratedKeys();
+        if (rs.next()) {
+            return rs.getInt(1);
+        }
+        return -1;
     }
 
-    public static void insertReview(Connection conn, String author, String text, int lecturerId, boolean isGood) throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement("INSERT INTO reviews VALUES (NULL, ?, ?, ?, ?)");
+    public static int insertReview(Connection conn, String author, String text, int lecturerId, boolean isGood) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("INSERT INTO reviews VALUES (NULL, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1, author);
         stmt.setString(2, text);
         stmt.setInt(3, lecturerId);
         stmt.setBoolean(4, isGood);
         stmt.execute();
+
+        // return id
+        ResultSet rs = stmt.getGeneratedKeys();
+        if (rs.next()) {
+            return rs.getInt(1);
+        }
+        return -1;
     }
 
-    public static Lecturer selectLecturer(Connection conn, String name) throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM lecturers WHERE name = ?");
-        stmt.setString(1, name);
+    public static Lecturer selectLecturer(Connection conn, int id) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM lecturers WHERE id = ?");
+        stmt.setInt(1, id);
         ResultSet results = stmt.executeQuery();
         if (results.next()) {
             Lecturer l = new Lecturer();
@@ -74,10 +88,9 @@ public class Main {
         return lecturers;
     }
 
-    public static ArrayList<Review> selectReviews(Connection conn, int lecturerId) throws SQLException {
+    public static ArrayList<Review> selectReviews(Connection conn) throws SQLException {
         ArrayList<Review> reviews = new ArrayList<>();
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM reviews INNER JOIN lecturers ON reviews.lecturer_id = lecturers.id WHERE lecturers.id = ?");
-        stmt.setInt(1, lecturerId);
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM reviews");
         ResultSet results = stmt.executeQuery();
         while (results.next()) {
             Review r = new Review();
@@ -99,7 +112,8 @@ public class Main {
 
         // insert test data
         //if (selectLecturers(conn).size() == 0) {
-        //    insertLecturer(conn, "Hannibal", "What's fuh dinnah?", "http://screenrant.com/wp-content/uploads/Anthony-Hopkins-as-Hannibal-Lecter-in-Silence-of-the-Lambs.jpg");
+            //int id = insertLecturer(conn, "Hannibal", "What's fuh dinnah?", "http://screenrant.com/wp-content/uploads/Anthony-Hopkins-as-Hannibal-Lecter-in-Silence-of-the-Lambs.jpg");
+            //System.out.println(id);
         //}
 
         Spark.get(
@@ -115,16 +129,16 @@ public class Main {
                     String name = request.queryParams("name");
                     String topic = request.queryParams("topic");
                     String image = request.queryParams("image");
-                    insertLecturer(conn, name, topic, image);
-                    return "";
+                    int id = insertLecturer(conn, name, topic, image);
+                    JsonSerializer s =  new JsonSerializer();
+                    return s.serialize(selectLecturer(conn, id));
                 })
         );
         Spark.get(
                 "/reviews",
                 ((request, response) -> {
-                    int lecturerId = Integer.valueOf(request.queryParams("lecturerId"));
                     JsonSerializer s = new JsonSerializer();
-                    return s.serialize(selectReviews(conn, lecturerId));
+                    return s.serialize(selectReviews(conn));
                 })
         );
         Spark.post(
@@ -134,8 +148,9 @@ public class Main {
                     String text = request.queryParams("text");
                     int lecturerId = Integer.valueOf(request.queryParams("lecturerId"));
                     boolean isGood = Boolean.valueOf(request.queryParams("isGood"));
-                    insertReview(conn, author, text, lecturerId, isGood);
-                    return "";
+                    int id = insertReview(conn, author, text, lecturerId, isGood);
+                    JsonSerializer s = new JsonSerializer();
+                    return s.serialize(selectReview(conn, id));
                 })
         );
     }
