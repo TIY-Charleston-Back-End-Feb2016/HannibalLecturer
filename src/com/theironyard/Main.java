@@ -51,6 +51,7 @@ public class Main {
         ResultSet results = stmt.executeQuery();
         if (results.next()) {
             Lecturer l = new Lecturer();
+            l.id = results.getInt("id");
             l.name = results.getString("name");
             l.topic = results.getString("topic");
             l.image = results.getString("image");
@@ -65,6 +66,7 @@ public class Main {
         ResultSet results = stmt.executeQuery();
         if (results.next()) {
             Review r = new Review();
+            r.id = results.getInt("id");
             r.author = results.getString("author");
             r.text = results.getString("text");
             r.lecturerId = results.getInt("lecturer_id");
@@ -80,6 +82,7 @@ public class Main {
         ResultSet results = stmt.executeQuery();
         while (results.next()) {
             Lecturer l = new Lecturer();
+            l.id = results.getInt("id");
             l.name = results.getString("name");
             l.topic = results.getString("topic");
             l.image = results.getString("image");
@@ -88,12 +91,14 @@ public class Main {
         return lecturers;
     }
 
-    public static ArrayList<Review> selectReviews(Connection conn) throws SQLException {
+    public static ArrayList<Review> selectReviews(Connection conn, int lecturerId) throws SQLException {
         ArrayList<Review> reviews = new ArrayList<>();
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM reviews");
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM reviews INNER JOIN lecturers ON lecturers.id = reviews.lecturer_id WHERE lecturers.id = ?");
+        stmt.setInt(1, lecturerId);
         ResultSet results = stmt.executeQuery();
         while (results.next()) {
             Review r = new Review();
+            r.id = results.getInt("id");
             r.author = results.getString("author");
             r.text = results.getString("text");
             r.lecturerId = results.getInt("lecturer_id");
@@ -109,12 +114,6 @@ public class Main {
 
         Spark.externalStaticFileLocation("public");
         Spark.init();
-
-        // insert test data
-        //if (selectLecturers(conn).size() == 0) {
-            //int id = insertLecturer(conn, "Hannibal", "What's fuh dinnah?", "http://screenrant.com/wp-content/uploads/Anthony-Hopkins-as-Hannibal-Lecter-in-Silence-of-the-Lambs.jpg");
-            //System.out.println(id);
-        //}
 
         Spark.get(
                 "/lecturers",
@@ -137,8 +136,9 @@ public class Main {
         Spark.get(
                 "/reviews",
                 ((request, response) -> {
+                    int lecturerId = Integer.valueOf(request.queryParams("lecturerId"));
                     JsonSerializer s = new JsonSerializer();
-                    return s.serialize(selectReviews(conn));
+                    return s.serialize(selectReviews(conn, lecturerId));
                 })
         );
         Spark.post(
