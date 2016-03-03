@@ -18,7 +18,7 @@ var hanLec = {
       var lecturer = hanLec.getLecturerInfo();
       hanLec.createLecturer(lecturer);
     });
-    
+
     $('input[name="show-lecturers"]').on('click', function(event) {
       event.preventDefault();
       hanLec.getLecturers();
@@ -79,9 +79,9 @@ var hanLec = {
   },
   getRatingInfo: function() {
     var author = $('input[name="author"]').val();
-    var text = $('input[name="topic"]').val();
+    var text = $('input[name="comment"]').val();
     var isGood = document.getElementById('isGood').checked;
-    var lecturerId = $('.create-rating').find('span').text();
+    var lecturerId = $('.create-rating').find('span.hidden').text();
     return {
       lecturerId: lecturerId,
       author: author,
@@ -108,8 +108,14 @@ var hanLec = {
       }
     })
   },
-  getRatings: function(lecturerId) {
-
+  getRatings: function() {
+    $.ajax({
+      method: 'GET',
+      url: hanLec.url.reviews,
+      success: function(data) {
+        console.log(data);
+      }
+    })
   },
 
   addLecturerToDom: function(lecturers) {
