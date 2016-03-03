@@ -5,13 +5,17 @@ var templates = {
     "<h6><%= topic %></h6>",
     "<div class='lecturer-face'>",
     "<img src='<%= image %>'>",
-    "<button data-id='<%= id %>'> SHOW RATINGS </button>"
+    "<button data-id='<%= id %>'> SHOW RATINGS </button>",
     "</div>"
   ].join(""),
   ratings: [
     "<div class='rating'>",
-    "<ul><li><%= author %> </li>",
-    "<li><%= text %> </li>",
-    "<li><%= isGood %></li></ul></div>"
+    "<ul><li>Name: <%= author %> </li>",
+    "<li>Comment: <%= text %> </li>",
+    "<% if (isGood) { %>",
+    "<li> THUMBS UP</li></ul></div>",
+    "<% } else { %> ",
+    "<li> THUMBS DOWN</li></ul></div>",
+    "<% } %>"
   ].join("")
 }

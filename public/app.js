@@ -6,13 +6,22 @@ var hanLec = {
   url: {
     getLecturer: "/lecturers",
     createLecturer: "/lecturers",
-    reviews: '/reviews'
+    reviews: '/reviews?lecturerId=',
+    createReview: '/reviews'
   },
   init: function() {
     hanLec.events()
     hanLec.styling()
   },
   events: function() {
+
+    $('.create-rating, .ratings').on('click',"input[name='back-to-lecturers']",function() {
+      hanLec.getLecturers();
+    })
+
+    $('.lecturers').on('click',"input[name='back-to-lecturers']",function() {
+      hanLec.getLecturers();
+    })
     $('input[name="create-lecturer"]').on('click', function(event) {
       event.preventDefault();
       var lecturer = hanLec.getLecturerInfo();
@@ -29,15 +38,19 @@ var hanLec = {
       console.log(lecturerId);
       $('.create-rating').removeClass('hidden').siblings().addClass('hidden');
       $('.create-rating').append("<span class='hidden'>" + lecturerId + "</span>");
+      $('.create-rating').append('<input type="button" name="back-to-lecturers" value="Back To Lecturers">')
     });
 
     $('.create-rating').on('click','input[type="submit"]',function(event) {
       event.preventDefault();
       var rating = hanLec.getRatingInfo();
+      console.log(rating);
+
       hanLec.createRating(rating);
     });
 
     $('.lecturers').on('click','button',function(event) {
+      console.log($(this));
       var id = $(this).data('id');
       hanLec.getRatings(id);
     })
@@ -100,14 +113,13 @@ var hanLec = {
   deleteLecturer: function(id) {
 
   },
-  createRating: function() {
+  createRating: function(rating) {
     $.ajax({
       method: 'POST',
-      url: hanLec.url.reviews,
+      url: hanLec.url.createReview,
       data: rating,
       success: function(data) {
         console.log(data);
-        hanLec.addRatingsToDom(data);
       },
       error: function(data) {
         console.log("ERR",data);
@@ -117,9 +129,10 @@ var hanLec = {
   getRatings: function(lecturerId) {
     $.ajax({
       method: 'GET',
-      url: hanLec.url.reviews + "/" + lecturerId,
+      url: hanLec.url.reviews + lecturerId,
       success: function(data) {
         console.log(data);
+        hanLec.addRatingsToDom(JSON.parse(data));
       }
     })
   },
@@ -142,5 +155,6 @@ var hanLec = {
     });
     $('.ratings').siblings().addClass('hidden');
     $('.ratings').removeClass('hidden');
+    $('.ratings').append('<input type="button" name="back-to-lecturers" value="Back To Lecturers">')
   }
 }
