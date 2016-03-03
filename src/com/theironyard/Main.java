@@ -31,6 +31,35 @@ public class Main {
         stmt.execute();
     }
 
+    public static Lecturer selectLecturer(Connection conn, String name) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM lecturers WHERE name = ?");
+        stmt.setString(1, name);
+        ResultSet results = stmt.executeQuery();
+        if (results.next()) {
+            Lecturer l = new Lecturer();
+            l.name = results.getString("name");
+            l.topic = results.getString("topic");
+            l.image = results.getString("image");
+            return l;
+        }
+        return null;
+    }
+
+    public static Review selectReview(Connection conn, int id) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM reviews WHERE id = ?");
+        stmt.setInt(1, id);
+        ResultSet results = stmt.executeQuery();
+        if (results.next()) {
+            Review r = new Review();
+            r.author = results.getString("author");
+            r.text = results.getString("text");
+            r.lecturerId = results.getInt("lecturer_id");
+            r.isGood = results.getBoolean("is_good");
+            return r;
+        }
+        return null;
+    }
+
     public static ArrayList<Lecturer> selectLecturers(Connection conn) throws SQLException {
         ArrayList<Lecturer> lecturers = new ArrayList<>();
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM lecturers");
@@ -87,6 +116,25 @@ public class Main {
                     String topic = request.queryParams("topic");
                     String image = request.queryParams("image");
                     insertLecturer(conn, name, topic, image);
+                    return "";
+                })
+        );
+        Spark.get(
+                "/reviews",
+                ((request, response) -> {
+                    int lecturerId = Integer.valueOf(request.queryParams("lecturerId"));
+                    JsonSerializer s = new JsonSerializer();
+                    return s.serialize(selectReviews(conn, lecturerId));
+                })
+        );
+        Spark.post(
+                "/reviews",
+                ((request, response) -> {
+                    String author = request.queryParams("author");
+                    String text = request.queryParams("text");
+                    int lecturerId = Integer.valueOf(request.queryParams("lecturerId"));
+                    boolean isGood = Boolean.valueOf(request.queryParams("isGood"));
+                    insertReview(conn, author, text, lecturerId, isGood);
                     return "";
                 })
         );
