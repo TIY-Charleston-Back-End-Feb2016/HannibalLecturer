@@ -24,7 +24,7 @@ public class Main {
         // return id
         ResultSet rs = stmt.getGeneratedKeys();
         if (rs.next()) {
-            return rs.getInt("id");
+            return rs.getInt(1);
         }
         return -1;
     }
@@ -40,7 +40,7 @@ public class Main {
         // return id
         ResultSet rs = stmt.getGeneratedKeys();
         if (rs.next()) {
-            return rs.getInt("id");
+            return rs.getInt(1);
         }
         return -1;
     }
@@ -88,10 +88,9 @@ public class Main {
         return lecturers;
     }
 
-    public static ArrayList<Review> selectReviews(Connection conn, int lecturerId) throws SQLException {
+    public static ArrayList<Review> selectReviews(Connection conn) throws SQLException {
         ArrayList<Review> reviews = new ArrayList<>();
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM reviews INNER JOIN lecturers ON reviews.lecturer_id = lecturers.id WHERE lecturers.id = ?");
-        stmt.setInt(1, lecturerId);
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM reviews");
         ResultSet results = stmt.executeQuery();
         while (results.next()) {
             Review r = new Review();
@@ -113,7 +112,8 @@ public class Main {
 
         // insert test data
         //if (selectLecturers(conn).size() == 0) {
-        //    insertLecturer(conn, "Hannibal", "What's fuh dinnah?", "http://screenrant.com/wp-content/uploads/Anthony-Hopkins-as-Hannibal-Lecter-in-Silence-of-the-Lambs.jpg");
+            //int id = insertLecturer(conn, "Hannibal", "What's fuh dinnah?", "http://screenrant.com/wp-content/uploads/Anthony-Hopkins-as-Hannibal-Lecter-in-Silence-of-the-Lambs.jpg");
+            //System.out.println(id);
         //}
 
         Spark.get(
@@ -137,9 +137,8 @@ public class Main {
         Spark.get(
                 "/reviews",
                 ((request, response) -> {
-                    int lecturerId = Integer.valueOf(request.queryParams("lecturerId"));
                     JsonSerializer s = new JsonSerializer();
-                    return s.serialize(selectReviews(conn, lecturerId));
+                    return s.serialize(selectReviews(conn));
                 })
         );
         Spark.post(
