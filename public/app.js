@@ -36,6 +36,11 @@ var hanLec = {
       var rating = hanLec.getRatingInfo();
       hanLec.createRating(rating);
     });
+
+    $('.lecturers').on('click','button',function(event) {
+      var id = $(this).data('id');
+      hanLec.getRatings(id);
+    })
   },
   styling: function() {
 
@@ -95,23 +100,24 @@ var hanLec = {
   deleteLecturer: function(id) {
 
   },
-  createRating: function(rating) {
+  createRating: function() {
     $.ajax({
       method: 'POST',
       url: hanLec.url.reviews,
       data: rating,
       success: function(data) {
         console.log(data);
+        hanLec.addRatingsToDom(data);
       },
       error: function(data) {
         console.log("ERR",data);
       }
     })
   },
-  getRatings: function() {
+  getRatings: function(lecturerId) {
     $.ajax({
       method: 'GET',
-      url: hanLec.url.reviews,
+      url: hanLec.url.reviews + "/" + lecturerId,
       success: function(data) {
         console.log(data);
       }
@@ -126,5 +132,15 @@ var hanLec = {
     })
     $('.lecturers').siblings().addClass('hidden');
     $('.lecturers').removeClass('hidden');
+  },
+
+  addRatingsToDom: function(ratings) {
+    $('.ratings').html("");
+    var tmpl = _.template(templates.ratings);
+    ratings.forEach(function(rate) {
+      $('.ratings').append(tmpl(rate));
+    });
+    $('.ratings').siblings().addClass('hidden');
+    $('.ratings').removeClass('hidden');
   }
 }
