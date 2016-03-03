@@ -1,0 +1,32 @@
+* {
+  font-family: 'roboto', 'fantasy', 'san-serif'
+}
+
+nav {
+  width: 100%;
+  background-color: #ad4321;
+  margin: 0 auto;
+  border-bottom: 2px dotted pink;
+  height: 45px;
+}
+
+nav input {
+  width: 30%;
+  margin-left: 35%;
+}
+
+.container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.container form input[type='text'] {
+  width: 30%;
+}
+
+.container form input[type='submit'] {
+  width: 20%;
+  background-color: #ad4321;
+  border-radius: 10px;
+  color: #fff;
+}
