@@ -4,19 +4,38 @@ $(document).ready(function() {
 
 var hanLec = {
   url: {
-    getLecturer: "/lecturers/",
-    createLecturer: "/lecturers/"
+    getLecturer: "/lecturers",
+    createLecturer: "/lecturers",
+    reviews: '/reviews'
   },
   init: function() {
     hanLec.events()
     hanLec.styling()
   },
   events: function() {
-    $('input[name["create-lecturer"]]').on('click', function(event) {
+    $('input[name="create-lecturer"]').on('click', function(event) {
       event.preventDefault();
       var lecturer = hanLec.getLecturerInfo();
       hanLec.createLecturer(lecturer);
-    })
+    });
+    
+    $('input[name="show-lecturers"]').on('click', function(event) {
+      event.preventDefault();
+      hanLec.getLecturers();
+    });
+
+    $('.lecturers').on('click','img',function(event) {
+      var lecturerId = $(this).parent().parent().data('id');
+      console.log(lecturerId);
+      $('.create-rating').removeClass('hidden').siblings().addClass('hidden');
+      $('.create-rating').append("<span class='hidden'>" + lecturerId + "</span>");
+    });
+
+    $('.create-rating').on('click','input[type="submit"]',function(event) {
+      event.preventDefault();
+      var rating = hanLec.getRatingInfo();
+      hanLec.createRating(rating);
+    });
   },
   styling: function() {
 
@@ -27,7 +46,8 @@ var hanLec = {
       url: hanLec.url.getLecturer,
       success: function(lecturerData) {
         console.log("RECEIVED LECTURERS", lecturerData);
-
+        window.glob = lecturerData;
+        hanLec.addLecturerToDom(JSON.parse(lecturerData));
       },
       error: function(err) {
         console.log('oh shit', err);
@@ -57,6 +77,18 @@ var hanLec = {
       image: image
     };
   },
+  getRatingInfo: function() {
+    var author = $('input[name="author"]').val();
+    var text = $('input[name="topic"]').val();
+    var isGood = document.getElementById('isGood').checked;
+    var lecturerId = $('.create-rating').find('span').text();
+    return {
+      lecturerId: lecturerId,
+      author: author,
+      text: text,
+      isGood: isGood
+    };
+  },
   updateLecturer: function(id) {
 
   },
@@ -64,9 +96,29 @@ var hanLec = {
 
   },
   createRating: function(rating) {
-
+    $.ajax({
+      method: 'POST',
+      url: hanLec.url.reviews,
+      data: rating,
+      success: function(data) {
+        console.log(data);
+      },
+      error: function(data) {
+        console.log("ERR",data);
+      }
+    })
   },
   getRatings: function(lecturerId) {
 
+  },
+
+  addLecturerToDom: function(lecturers) {
+    $('.lecturers').html("");
+    var tmpl = _.template(templates.lecturers);
+    lecturers.forEach(function(lect) {
+      $('.lecturers').append(tmpl(lect));
+    })
+    $('.lecturers').siblings().addClass('hidden');
+    $('.lecturers').removeClass('hidden');
   }
 }
